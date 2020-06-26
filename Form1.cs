@@ -32,24 +32,13 @@ namespace TVDatabaseForm1
                 string genre = genre_txtbx.Text;
                 int minutes = int.Parse(time_txtbx.Text);
                 string rate = rating_txtbx.Text;
-/*
-                    OleDbCommand cmd = conn.CreateCommand();
-                    cmd.CommandText = InsertMovie(id, title, year, genre, minutes, rate);
+
+                using (OleDbCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = string.Format("INSERT INTO Movies VALUES ('{0}', '{1}', {2}, '{3}', {4}, '{5}');", 
+                        id, title, year, genre, minutes, rate);
                     cmd.ExecuteNonQuery();
                 }
-
-                string InsertMovie(string id, string title, int year, string genre, int minutes, string rate)
-                {
-                    return string.Format("INSERT INTO Movies VALUES ('{0}', '{1}', {2}, '{3}', {4}, '{5}');",
-                                        id, title, year, genre, minutes, rate);
-                }
-            }
-
-*/
-            OleDbCommand cmd = conn.CreateCommand();
-                cmd.CommandText = string.Format("INSERT INTO Movies VALUES ('{0}', '{1}', {2}, '{3}', {4}, '{5}');", 
-                    id, title, year, genre, minutes, rate);
-                cmd.ExecuteNonQuery();
             }
         }
 
@@ -58,12 +47,14 @@ namespace TVDatabaseForm1
             using (OleDbConnection conn = new OleDbConnection(connStr))
             {
                 conn.Open();
-                OleDbCommand cmdA = conn.CreateCommand();
-                cmdA.CommandText = "SELECT * FROM Movies;";
-                using (OleDbDataReader myDReader = cmdA.ExecuteReader())
+                using (OleDbCommand cmdA = conn.CreateCommand())
                 {
-                    dt1.Load(myDReader);
-                    dataGridView1.DataSource = dt1;
+                    cmdA.CommandText = "SELECT * FROM Movies;";
+                    using (OleDbDataReader myDReader = cmdA.ExecuteReader())
+                    {
+                        dt1.Load(myDReader);
+                        dataGridView1.DataSource = dt1;
+                    }
                 }
             }
         }
